@@ -605,20 +605,31 @@ icmp 192.168.108.88:57096  192.168.103.12:57096  8.8.8.8:57096         8.8.8.8:5
 icmp 192.168.108.88:56584  192.168.103.12:56584  8.8.4.4:56584         8.8.4.4:56584
 Total number of translations: 7
 
-CREATING A WEB PROXY OR HIDING BEHIND NAT:
-www.sti.edu.ph:      vs     www.dlsu.edu.ph:
-@EDGE:
+CREATING A WEB PROXY OR HIDING BEHIND NAT: for gambling SITES.
+PORT ADDRESS TRANSLATION + NETWORK ADDRESS TRANSLATION:
+               FORTINET,SOPHOS,CP,HUAWEI,
+BET10.COM            + PAT/NAT:fw
+insidelocal            insideGlobal/OUTSIDE
+192.168.102.10:80       208.8.8.69:80
+192.168.102.10:443      208.8.8.69:443
+                         betlog.com
+BET11.COM
+192.168.102.11:80       208.8.8.69:8080
+192.168.102.11:443      208.8.8.69:8443
+
 config t
 no access-list 8
-access-list 8 permit any
+access-list 8 permit host 192.168.103.10
+access-list 8 permit host 192.168.103.11
+ip host betlog.com 208.8.8.69
 Int Gi 3
  ip nat Inside
 Int gi 1
  ip nat Outside
-IP Nat inside source static tcp 192.168.103.21 80 208.8.8.47 80
-IP Nat inside source static tcp 192.168.103.21 443 208.8.8.47 443
-IP Nat inside source static tcp 192.168.103.22 80 208.8.8.47 8080
-IP Nat inside source static tcp 192.168.103.22 443 208.8.8.47 8443
+IP Nat inside source static tcp 192.168.103.10 80 208.8.8.69 80
+IP Nat inside source static tcp 192.168.103.10 443 208.8.8.69 443
+IP Nat inside source static tcp 192.168.103.11 80 208.8.8.69 8080
+IP Nat inside source static tcp 192.168.103.11 443 208.8.8.69 8443
 IP nat inside source list 8 int gi 1 Overload
 end
 show ip nat translation
